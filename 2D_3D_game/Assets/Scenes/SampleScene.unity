@@ -794,12 +794,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -86736234, guid: 0884db85401474186b348a52b9dfc430, type: 3}
+  m_Sprite: {fileID: 2101001, guid: b5c92ef0336bf4e5ca2e5c775b290135, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.55, y: 0.65}
+  m_Size: {x: 0.4, y: 0.68}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -813,7 +813,7 @@ Transform:
   m_GameObject: {fileID: 1503606538}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.69, y: 0.86, z: -5.02}
+  m_LocalPosition: {x: 8.69, y: 0.87, z: -5.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -833,7 +833,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b10ada8903c7c49b395daea819403d86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
-  moveSpeed: 1
+  moveSpeed: 2
   jumpForce: 3.25
   jumpKey: 32
   coyoteTime: 0.12
@@ -852,7 +852,18 @@ MonoBehaviour:
   playerSprite: {fileID: 0}
   playerAnimator: {fileID: 1503606544}
   runningBoolName: isRunning
+  jumpBoolName: isJumping
+  defenseBoolName: defense
+  attackBoolName: attack
+  attackThreeBoolName: attack3
   runStopDelay: 0.08
+  attackKey: 101
+  attackThreeKey: 113
+  attackDuration: 0.2
+  attackThreeDuration: 0.18
+  attackCooldown: 0.12
+  defenseVisualDrop: 0
+  defenseVisualDropSpeed: 12
 --- !u!136 &1503606542
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -901,7 +912,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 120
   m_CollisionDetection: 2
 --- !u!95 &1503606544
 Animator:

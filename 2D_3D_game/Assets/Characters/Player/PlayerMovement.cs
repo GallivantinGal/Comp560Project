@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
@@ -27,9 +28,27 @@ public class PlayerMovement : MonoBehaviour
     [Header("Animation")]
     public Animator playerAnimator;
     public string runningBoolName = "isRunning";
+    public string jumpBoolName = "isJumping";
+    [FormerlySerializedAs("rollTriggerName")]
+    [FormerlySerializedAs("defenseTriggerName")]
+    public string defenseBoolName = "defense";
+    public string attackBoolName = "attack";
+    public string attackThreeBoolName = "attack3";
     public float runStopDelay = 0.08f;
+    public KeyCode attackKey = KeyCode.E;
+    public KeyCode attackThreeKey = KeyCode.Q;
+    public float attackDuration = 0.2f;
+    public float attackThreeDuration = 0.18f;
+    public float attackCooldown = 0.12f;
+
+    [Header("Defense Visuals")]
+    [FormerlySerializedAs("rollVisualDrop")]
+    public float defenseVisualDrop = 0.12f;
+    [FormerlySerializedAs("rollVisualDropSpeed")]
+    public float defenseVisualDropSpeed = 12f;
 
     private Rigidbody rb;
+    private CapsuleCollider playerCollider;
     private Vector3 moveInput;
     private bool jumpRequested;
     private float coyoteTimer;
@@ -39,12 +58,38 @@ public class PlayerMovement : MonoBehaviour
     private bool warnedMissingTerrainLayer;
     private int runningBoolHash;
     private bool canDriveRunningBool;
+    private int jumpBoolHash;
+    private bool canDriveJumpBool;
+    private int defenseBoolHash;
+    private bool canDriveDefenseBool;
+    private int attackBoolHash;
+    private bool canDriveAttackBool;
+    private int attackThreeBoolHash;
+    private bool canDriveAttackThreeBool;
     private float runStopTimer;
+    private float attackActiveTimer;
+    private float attackCooldownTimer;
+    private float currentDefenseVisualDrop;
     private float facingX = 1f;
+    private float lockedZPosition;
+    private Vector3 baseColliderCenter;
+    private readonly int attackStateNameHash = Animator.StringToHash("Base Layer.Attack");
+    private readonly int attackThreeStateNameHash = Animator.StringToHash("Base Layer.Attack3");
+    private int activeAttackBoolHash;
+    private bool isDefending;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        attackKey = KeyCode.E;
+        attackThreeKey = KeyCode.Q;
+        playerCollider = GetComponent<CapsuleCollider>();
+        lockedZPosition = rb.position.z;
+        rb.constraints |= RigidbodyConstraints.FreezePositionZ;
+        if (playerCollider != null)
+        {
+            baseColliderCenter = playerCollider.center;
+        }
 
         if (playerSprite == null)
         {
@@ -63,10 +108,50 @@ public class PlayerMovement : MonoBehaviour
         if (playerAnimator != null && !string.IsNullOrWhiteSpace(runningBoolName))
         {
             runningBoolHash = Animator.StringToHash(runningBoolName);
-            canDriveRunningBool = HasBoolParameter(playerAnimator, runningBoolHash);
+            canDriveRunningBool = HasParameter(playerAnimator, runningBoolHash, AnimatorControllerParameterType.Bool);
             if (!canDriveRunningBool)
             {
                 Debug.LogWarning($"PlayerMovement: Animator is missing bool parameter '{runningBoolName}'.");
+            }
+        }
+
+        if (playerAnimator != null && !string.IsNullOrWhiteSpace(jumpBoolName))
+        {
+            jumpBoolHash = Animator.StringToHash(jumpBoolName);
+            canDriveJumpBool = HasParameter(playerAnimator, jumpBoolHash, AnimatorControllerParameterType.Bool);
+            if (!canDriveJumpBool)
+            {
+                Debug.LogWarning($"PlayerMovement: Animator is missing bool parameter '{jumpBoolName}'.");
+            }
+        }
+
+        if (playerAnimator != null && !string.IsNullOrWhiteSpace(defenseBoolName))
+        {
+            defenseBoolHash = Animator.StringToHash(defenseBoolName);
+            canDriveDefenseBool = HasParameter(playerAnimator, defenseBoolHash, AnimatorControllerParameterType.Bool);
+            if (!canDriveDefenseBool)
+            {
+                Debug.LogWarning($"PlayerMovement: Animator is missing bool parameter '{defenseBoolName}'.");
+            }
+        }
+
+        if (playerAnimator != null && !string.IsNullOrWhiteSpace(attackBoolName))
+        {
+            attackBoolHash = Animator.StringToHash(attackBoolName);
+            canDriveAttackBool = HasParameter(playerAnimator, attackBoolHash, AnimatorControllerParameterType.Bool);
+            if (!canDriveAttackBool)
+            {
+                Debug.LogWarning($"PlayerMovement: Animator is missing bool parameter '{attackBoolName}'.");
+            }
+        }
+
+        if (playerAnimator != null && !string.IsNullOrWhiteSpace(attackThreeBoolName))
+        {
+            attackThreeBoolHash = Animator.StringToHash(attackThreeBoolName);
+            canDriveAttackThreeBool = HasParameter(playerAnimator, attackThreeBoolHash, AnimatorControllerParameterType.Bool);
+            if (!canDriveAttackThreeBool)
+            {
+                Debug.LogWarning($"PlayerMovement: Animator is missing bool parameter '{attackThreeBoolName}'.");
             }
         }
     }
@@ -74,9 +159,8 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         float moveX = Input.GetAxisRaw("Horizontal");
-        float moveZ = Input.GetAxisRaw("Vertical");
 
-        moveInput = new Vector3(moveX, 0f, moveZ).normalized;
+        moveInput = new Vector3(moveX, 0f, 0f).normalized;
 
         if (moveInput.sqrMagnitude > 0.0001f)
         {
@@ -91,6 +175,27 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        if (attackActiveTimer > 0f)
+        {
+            attackActiveTimer -= Time.deltaTime;
+            if (attackActiveTimer < 0f)
+            {
+                attackActiveTimer = 0f;
+            }
+        }
+
+        if (attackCooldownTimer > 0f)
+        {
+            attackCooldownTimer -= Time.deltaTime;
+            if (attackCooldownTimer < 0f)
+            {
+                attackCooldownTimer = 0f;
+            }
+        }
+
+        UpdateDefenseState();
+        UpdateAttackState();
+
         if (Input.GetKeyDown(jumpKey))
         {
             jumpRequested = true;
@@ -98,6 +203,54 @@ public class PlayerMovement : MonoBehaviour
 
         UpdateSpriteDirection();
         UpdateAnimatorState();
+    }
+
+    void UpdateDefenseState()
+    {
+        isDefending = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+
+        if (!canDriveDefenseBool)
+        {
+            return;
+        }
+
+        if (isDefending && attackActiveTimer > 0f)
+        {
+            StopActiveAttack();
+        }
+
+        playerAnimator.SetBool(defenseBoolHash, isDefending);
+    }
+
+    void UpdateAttackState()
+    {
+        if (!canDriveAttackBool && !canDriveAttackThreeBool)
+        {
+            return;
+        }
+
+        if (attackActiveTimer <= 0f)
+        {
+            StopActiveAttack();
+        }
+
+        bool attackPressed = Input.GetKeyDown(KeyCode.E) || (attackKey != KeyCode.E && Input.GetKeyDown(attackKey));
+        bool attackThreePressed = Input.GetKeyDown(KeyCode.Q) || (attackThreeKey != KeyCode.Q && Input.GetKeyDown(attackThreeKey));
+        if (isDefending || IsJumpingForAnimation() || attackActiveTimer > 0f || attackCooldownTimer > 0f)
+        {
+            return;
+        }
+
+        if (attackThreePressed && canDriveAttackThreeBool)
+        {
+            StartAttack(attackThreeBoolHash, attackThreeDuration, attackThreeStateNameHash);
+            return;
+        }
+
+        if (attackPressed)
+        {
+            StartAttack(attackBoolHash, attackDuration, attackStateNameHash);
+        }
     }
 
     void FixedUpdate()
@@ -111,10 +264,37 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
+        UpdateDefenseVisualDrop();
         UpdateGroundedTimer();
         TryJump();
         ApplyMovement();
         SnapToGround();
+    }
+
+    void UpdateDefenseVisualDrop()
+    {
+        float targetDrop = isDefending ? defenseVisualDrop : 0f;
+        float previousDrop = currentDefenseVisualDrop;
+        currentDefenseVisualDrop = Mathf.MoveTowards(
+            currentDefenseVisualDrop,
+            targetDrop,
+            defenseVisualDropSpeed * Time.fixedDeltaTime
+        );
+
+        float dropDelta = currentDefenseVisualDrop - previousDrop;
+        if (!Mathf.Approximately(dropDelta, 0f))
+        {
+            Vector3 position = rb.position;
+            position.y -= dropDelta;
+            rb.MovePosition(position);
+        }
+
+        if (playerCollider != null)
+        {
+            Vector3 colliderCenter = baseColliderCenter;
+            colliderCenter.y += currentDefenseVisualDrop;
+            playerCollider.center = colliderCenter;
+        }
     }
 
     void UpdateGroundedTimer()
@@ -177,10 +357,17 @@ public class PlayerMovement : MonoBehaviour
         Vector3 velocity = new Vector3(
             moveInput.x * moveSpeed,
             rb.linearVelocity.y,
-            moveInput.z * moveSpeed
+            0f
         );
 
         rb.linearVelocity = velocity;
+
+        Vector3 position = rb.position;
+        if (!Mathf.Approximately(position.z, lockedZPosition))
+        {
+            position.z = lockedZPosition;
+            rb.MovePosition(position);
+        }
     }
 
     void SnapToGround()
@@ -197,8 +384,10 @@ public class PlayerMovement : MonoBehaviour
                 return;
             }
 
-            float targetY = hit.point.y + groundSnapOffset;
-            float distanceAboveGround = rb.position.y - targetY;
+            Vector3 bodyPosition = GetBodyPosition();
+            float targetBodyY = hit.point.y + groundSnapOffset;
+            float targetY = targetBodyY - currentDefenseVisualDrop;
+            float distanceAboveGround = bodyPosition.y - targetBodyY;
 
             if (distanceAboveGround > maxSnapDistance)
             {
@@ -229,7 +418,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (TryGetGroundHit(out RaycastHit hit))
         {
-            float distanceToGround = rb.position.y - hit.point.y;
+            float distanceToGround = GetBodyPosition().y - hit.point.y;
             float distanceFromTargetOffset = Mathf.Abs(distanceToGround - groundSnapOffset);
             float strictTolerance = Mathf.Min(groundedTolerance, landingResetTolerance);
             return distanceFromTargetOffset <= strictTolerance;
@@ -251,7 +440,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        Vector3 rayOrigin = rb.position + Vector3.up * 0.5f;
+        Vector3 rayOrigin = GetBodyPosition() + Vector3.up * 0.5f;
         RaycastHit[] hits = Physics.RaycastAll(
             rayOrigin,
             Vector3.down,
@@ -293,6 +482,13 @@ public class PlayerMovement : MonoBehaviour
         return false;
     }
 
+    Vector3 GetBodyPosition()
+    {
+        Vector3 bodyPosition = rb.position;
+        bodyPosition.y += currentDefenseVisualDrop;
+        return bodyPosition;
+    }
+
     void UpdateSpriteDirection()
     {
         if (playerSprite == null)
@@ -314,6 +510,13 @@ public class PlayerMovement : MonoBehaviour
 
     void UpdateAnimatorState()
     {
+        bool isJumping = IsJumpingForAnimation();
+
+        if (canDriveJumpBool)
+        {
+            playerAnimator.SetBool(jumpBoolHash, isJumping);
+        }
+
         if (!canDriveRunningBool)
         {
             return;
@@ -323,11 +526,43 @@ public class PlayerMovement : MonoBehaviour
         playerAnimator.SetBool(runningBoolHash, isRunning);
     }
 
-    bool HasBoolParameter(Animator animator, int paramHash)
+    void StartAttack(int attackBoolToSet, float duration, int stateHash)
+    {
+        if (attackBoolToSet == 0)
+        {
+            return;
+        }
+
+        StopActiveAttack();
+        activeAttackBoolHash = attackBoolToSet;
+        attackActiveTimer = duration;
+        attackCooldownTimer = duration + attackCooldown;
+        playerAnimator.SetBool(activeAttackBoolHash, true);
+        playerAnimator.Play(stateHash, 0, 0f);
+    }
+
+    void StopActiveAttack()
+    {
+        if (activeAttackBoolHash == 0 || playerAnimator == null)
+        {
+            activeAttackBoolHash = 0;
+            return;
+        }
+
+        playerAnimator.SetBool(activeAttackBoolHash, false);
+        activeAttackBoolHash = 0;
+    }
+
+    bool IsJumpingForAnimation()
+    {
+        return jumpGroundLockTimer > 0f || rb.linearVelocity.y > 0.05f || !IsGrounded();
+    }
+
+    bool HasParameter(Animator animator, int paramHash, AnimatorControllerParameterType parameterType)
     {
         foreach (AnimatorControllerParameter parameter in animator.parameters)
         {
-            if (parameter.nameHash == paramHash && parameter.type == AnimatorControllerParameterType.Bool)
+            if (parameter.nameHash == paramHash && parameter.type == parameterType)
             {
                 return true;
             }
