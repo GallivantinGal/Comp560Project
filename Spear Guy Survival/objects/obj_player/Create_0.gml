@@ -26,10 +26,11 @@ shieldDir = 1;
 enum moveStates {
 	walk,
 	jump,
-	attack,
 	hurt,
 	idle,
-	drinkingPotion,
+	block,
+	slash,
+	thrust,
 	stun
 }
 

@@ -1,16 +1,6 @@
 /// @description Controls
 
 
-
-if ((moveState == moveStates.idle) or (moveState == moveStates.crouch)) {
-	if ((global.playerHP < global.playerHPMax) and (global.potions > 0)) {
-		if (global.key_potion) {
-			moveState = moveStates.drinkingPotion;
-		}
-	}
-}
-
-
 //dying
 if (global.playerHP <= 0) {
 	room_restart();	
@@ -22,12 +12,12 @@ hSpeed = moveSpd * walkSpeed;
 vSpeed += gravitySpeed;
 
 
-if ((moveState != moveStates.attack) and (moveState != moveStates.hurt)) {
+if ((moveState != moveStates.slash) and (moveState != moveStates.hurt)) {
 	if (global.key_slash) {
 		sprite_index = attackSprite;
 		image_index = 0;
 		image_speed = 1;
-		moveState = moveStates.attack;
+		moveState = moveStates.slash;
 			
 	}
 }
@@ -67,12 +57,12 @@ if (place_meeting(x, y+vSpeed, obj_wall)) {
 		y += sign(vSpeed);
 	}
 	vSpeed = 0;
-	if ((hSpeed == 0) and (moveState != moveStates.crouch) and (moveState != moveStates.attack) and (moveState != moveStates.hurt) and (moveState != moveStates.drinkingPotion)) { 
+	if ((hSpeed == 0) and (moveState != moveStates.slash) and (moveState != moveStates.hurt)) { 
 		moveState = moveStates.idle;
 	}
-	if (moveState == moveStates.attack) {
-	hSpeed = 0;
-} 
+	if (moveState == moveStates.slash) {
+		hSpeed = 0;
+	} 
 }
 
 //jumping
@@ -94,12 +84,12 @@ if (moveState == moveStates.jump) {
 }
 
 //falling
-if ((moveState != moveStates.jump) and (moveState != moveStates.attack) and (vSpeed != 0)) {
+if ((moveState != moveStates.jump) and (moveState != moveStates.slash) and (vSpeed != 0)) {
 	moveState = moveStates.jump;
 	timer = 10;
 }
 
-if((vSpeed == 0) and (moveState != moveStates.crouch) and (moveState != moveStates.attack) and (moveState != moveStates.hurt) and (hSpeed != 0)) {
+if((vSpeed == 0) and (moveState != moveStates.slash) and (moveState != moveStates.hurt) and (hSpeed != 0)) {
 	moveState = moveStates.walk;
 }
 
@@ -140,7 +130,7 @@ if (invincible) {
 
 
 //Movement, should be last
-if ((moveState == moveStates.walk) or (moveState == moveStates.jump) or (moveState == moveStates.attack) or (moveState == moveStates.hurt)) {
+if ((moveState == moveStates.walk) or (moveState == moveStates.jump) or (moveState == moveStates.slash) or (moveState == moveStates.hurt)) {
 	x += hSpeed;
 }// else if (moveState == moveStates.hurt) {
 //	x -= hSpeed;
