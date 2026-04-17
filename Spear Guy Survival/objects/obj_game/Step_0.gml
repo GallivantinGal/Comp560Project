@@ -13,3 +13,6 @@ global.key_jump = keyboard_check_pressed(vk_space);
 global.key_slash = keyboard_check_pressed(ord("E"));
 global.key_thrust = keyboard_check_pressed(ord("Q"));
 global.key_block = keyboard_check(vk_shift);
+
+//Parallax backgrounds
+layer_x("Background", lerp(0,global.cameraX,.1));

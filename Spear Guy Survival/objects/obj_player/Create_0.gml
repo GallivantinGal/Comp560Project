@@ -7,11 +7,16 @@ walkSpeed = 2.2;
 fallSpeed = 6.5;
 hurtTimer = 0;
 
+healthBarHeight = 10;
+
 defSprite = spr_run;
 airSprite = spr_jump;
-attackSprite = spr_slash_up;
+slashUpSprite = spr_slash_up;
+slashDownSprite = spr_slash_down;
+thrustSprite = spr_thrust;
 hurtSprite = spr_hurt;
 idleSprite = spr_idle;
+runAttackSprite = spr_run_attack;
 
 invincible = false;
 invincibleTimer = 0;
@@ -21,6 +26,8 @@ weaponDmg = 1;
 
 isHurt = false;
 
+slashAgain = false;
+
 shieldDir = 1;
 
 enum moveStates {
@@ -29,9 +36,18 @@ enum moveStates {
 	hurt,
 	idle,
 	block,
-	slash,
-	thrust,
+	attack,
 	stun
 }
+
+enum attackTypes {
+	slashUp,
+	slashDown,
+	thrust,
+	jumpAttack,
+	none
+}
+
+attackType = attackTypes.none;
 
 moveState = moveStates.walk;

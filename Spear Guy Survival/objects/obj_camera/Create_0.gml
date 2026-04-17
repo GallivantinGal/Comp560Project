@@ -5,8 +5,8 @@ global.cameraY = 0;
 global.cameraXOffset = 10;
 global.cameraYOffset = -45;
 
-global.cameraWidth = 960;
-global.cameraHeight = 540;
+global.cameraWidth = 640;
+global.cameraHeight = 360;
 
 //Display
 displayScale = 2;
