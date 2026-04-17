@@ -15,7 +15,9 @@ if (moveState == moveStates.attack) {
 
 if (moveState == moveStates.hurt) {
 	moveState = moveStates.idle;
-	isHurt = false;
-	invincible = false;
-	invincibleTimer = 0;
+}
+
+if (moveState == moveStates.dead) {
+	image_speed = 0;
+	image_index = image_number-1;
 }

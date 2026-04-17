@@ -3,7 +3,7 @@
 hSpeed = 0;
 vSpeed = 0;
 gravitySpeed = 0.3;
-walkSpeed = 2.2;
+walkSpeed = 2.4;
 fallSpeed = 6.5;
 hurtTimer = 0;
 
@@ -17,16 +17,20 @@ thrustSprite = spr_thrust;
 hurtSprite = spr_hurt;
 idleSprite = spr_idle;
 runAttackSprite = spr_run_attack;
+deathSprite = spr_player_death;
+blockSprite = spr_block;
 
 invincible = false;
 invincibleTimer = 0;
+invincibleDuration = 60;
 
 weaponDmg = 1;
 
 hitByAttack = ds_list_create();
 
+attackerDirection = 0;
+//1 = right, -1 = left
 
-isHurt = false;
 
 slashAgain = false;
 
@@ -39,7 +43,8 @@ enum moveStates {
 	idle,
 	block,
 	attack,
-	stun
+	stun,
+	dead
 }
 
 enum attackTypes {

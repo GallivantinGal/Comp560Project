@@ -44,3 +44,15 @@ function player_attack_state(){ //also damage definitions
 	ds_list_destroy(_hitByAttackNow);
 	mask_index = spr_idle;
 }
+
+function damage_player(_val, _dir) {
+	if (moveState != moveStates.block and !invincible) {
+		global.playerHP -= _val;
+		moveState = moveStates.hurt;
+		image_index = 0;
+		hurtTimer = 0;
+		invincible = true;
+		attackerDirection = _dir;
+	}
+	
+}

@@ -3,13 +3,24 @@
 
 //dying
 if (global.playerHP <= 0) {
-	room_restart();	
-	global.playerHP = global.playerHPMax;
+	if (moveState != moveStates.dead) {
+		image_index = 0;	
+	}
+	moveState = moveStates.dead;
+	sprite_index = deathSprite;
+	hSpeed = 0;
+	vSpeed = 0;
 }
 
 var moveSpd = global.key_right - global.key_left;
 hSpeed = moveSpd * walkSpeed;
 vSpeed += gravitySpeed;
+
+if (moveState == moveStates.attack) and (sprite_index == slashDownSprite) {
+	if (global.key_slash) {
+		slashAgain = true;
+	}
+}
 
 switch (moveState) {
 	case moveStates.attack:
@@ -21,15 +32,17 @@ if (moveState != moveStates.attack) {
 	ds_list_clear(hitByAttack);	
 }
 
-if (moveState == moveStates.attack) and (sprite_index == slashDownSprite) {
-	if (global.key_slash) {
-		slashAgain = true;
-	}
-}
+
+
 
 if ((moveState != moveStates.attack) and (moveState != moveStates.hurt)) {
+	
 	if (global.key_slash) {
-		sprite_index = slashDownSprite;
+		if (moveState == moveStates.walk) {
+			sprite_index = runAttackSprite;	
+		} else {
+			sprite_index = slashDownSprite;
+		}
 		image_index = 0;
 		image_speed = 1;
 		moveState = moveStates.attack;
@@ -43,16 +56,11 @@ if ((moveState != moveStates.attack) and (moveState != moveStates.hurt)) {
 	}
 }
 
-if (isHurt) { 
-	moveState = moveStates.hurt;
-	image_index = 0;
-}
-
 if (moveState == moveStates.hurt) {
 	hurtTimer++;
 	//image_speed = 1;
 	sprite_index = hurtSprite;
-	if (attackerDirection == 1) { hSpeed = 2; } else { hSpeed = -2; }
+	if (attackerDirection == 1) { hSpeed = -2; } else { hSpeed = 2; }
 	if (hurtTimer > 20) {
 		event_perform(ev_other, ev_animation_end);
 		hSpeed = 0;
@@ -80,18 +88,24 @@ if (place_meeting(x, y+vSpeed, obj_wall)) {
 	if ((hSpeed == 0) and (moveState != moveStates.attack) and (moveState != moveStates.hurt)) { 
 		moveState = moveStates.idle;
 	}
-	if (moveState == moveStates.attack) {
+	if (moveState == moveStates.attack and sprite_index != spr_run_attack) {
 		hSpeed = 0;
 	} 
 }
 
+if (moveState != moveStates.hurt) {
+	if (hSpeed != 0) { 
+		image_xscale = sign(hSpeed);
+	}
+}
+
 //jumping
 if (moveState != moveStates.hurt) {
-if ((place_meeting(x, y+1, obj_wall)) and (global.key_jump)) {
-	vSpeed = -fallSpeed;
-	moveState = moveStates.jump;
-	timer = 0;
-}
+	if ((place_meeting(x, y+1, obj_wall)) and (global.key_jump)) {
+		vSpeed = -fallSpeed;
+		moveState = moveStates.jump;
+		timer = 0;
+	}
 }
 
 if (moveState == moveStates.jump) {
@@ -111,6 +125,19 @@ if ((moveState != moveStates.jump) and (moveState != moveStates.attack) and (vSp
 
 if((vSpeed == 0) and (moveState != moveStates.attack) and (moveState != moveStates.hurt) and (hSpeed != 0)) {
 	moveState = moveStates.walk;
+	//GMS code is sequential so we are still invulnerable while blocking even if theres a brief pause here
+}
+
+if ((moveState == moveStates.walk) or (moveState == moveStates.idle)) {
+	if (global.key_block) {
+		moveState = moveStates.block;
+	}
+}
+
+if (moveState == moveStates.block) {
+	sprite_index = blockSprite;
+	image_index = 0;
+	image_speed = 0;
 }
 
 //Sprite direction
@@ -128,22 +155,14 @@ if (moveState == moveStates.idle) {
 	sprite_index = idleSprite;
 	image_speed = 1;
 }
-	
-
-//Always
-if (moveState != moveStates.hurt) {
-if (hSpeed != 0) { 
-	image_xscale = sign(hSpeed);
-	shieldDir = sign(hSpeed);
-}
-}
 
 //invincibility frames
 if (invincible) {
 	invincibleTimer ++;
 	image_alpha = 0.5;
-	if (invincibleTimer > 60) {
+	if (invincibleTimer > invincibleDuration) {
 	invincible = false;
+	invincibleTimer = 0;
 	}
 } else { image_alpha = 1; }
 

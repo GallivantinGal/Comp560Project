@@ -1,0 +1,5 @@
+if (sprite_index == spr_enemy_death) {
+	image_speed = 0;
+	image_index = image_number-1;
+	
+}
