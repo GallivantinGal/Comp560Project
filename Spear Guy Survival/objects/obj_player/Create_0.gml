@@ -23,6 +23,8 @@ invincibleTimer = 0;
 
 weaponDmg = 1;
 
+hitByAttack = ds_list_create();
+
 
 isHurt = false;
 

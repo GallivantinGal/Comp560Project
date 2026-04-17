@@ -1,22 +1,27 @@
-function player_attack_state(){
+function player_attack_state(){ //also damage definitions
 	
 	var _hitbox, _dmg;
 	
 	switch (sprite_index) {
 		case slashDownSprite:
 			_hitbox = spr_slash_down_hb;
+			_dmg = 5;
 		break;
 		case slashUpSprite:
 			_hitbox = spr_slash_up_hb;
+			_dmg = 5;
 		break;
 		case thrustSprite:
 			_hitbox = spr_thrust_hb;
+			_dmg = 10;
 		break;
 		case runAttackSprite:
 			_hitbox = spr_run_attack_hb;
+			_dmg = 10;
 		break;
 		default:
 			_hitbox = spr_idle;
+			_dmg = 0;
 	}
 	
 	mask_index = _hitbox

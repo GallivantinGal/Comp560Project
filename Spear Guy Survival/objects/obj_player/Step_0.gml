@@ -11,6 +11,16 @@ var moveSpd = global.key_right - global.key_left;
 hSpeed = moveSpd * walkSpeed;
 vSpeed += gravitySpeed;
 
+switch (moveState) {
+	case moveStates.attack:
+		player_attack_state();
+	break;
+}
+
+if (moveState != moveStates.attack) {
+	ds_list_clear(hitByAttack);	
+}
+
 if (moveState == moveStates.attack) and (sprite_index == slashDownSprite) {
 	if (global.key_slash) {
 		slashAgain = true;
@@ -24,15 +34,14 @@ if ((moveState != moveStates.attack) and (moveState != moveStates.hurt)) {
 		image_speed = 1;
 		moveState = moveStates.attack;
 			
+	} else if (global.key_thrust) {
+		sprite_index = thrustSprite;
+		image_index = 0;
+		image_speed = 1;
+		moveState = moveStates.attack;
+			
 	}
 }
-
-if (moveState == moveStates.attack) {
-	player_attack_state();
-}
-
-
-
 
 if (isHurt) { 
 	moveState = moveStates.hurt;

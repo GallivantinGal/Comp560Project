@@ -1,5 +1,6 @@
 /// @description attack
 if (moveState == moveStates.attack) {
+	ds_list_clear(hitByAttack);
 	if (sprite_index == slashDownSprite) and (slashAgain) {
 		sprite_index = slashUpSprite;
 		slashAgain = false;
