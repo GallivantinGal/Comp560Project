@@ -20,7 +20,7 @@ You control a knight fighting a large spear boss. Combat is timing-based, so avo
 - **Attack 1:** 360° swipe that hits all around the boss  
 - **Attack 2:** Charge thrust toward the player  
 - **Attack 3:** Charge thrust upward diagonally
-- **Attack 3:** Counter shield that disables your block for 2 seconds  
+- **Attack 4:** Counter shield that disables your block for 2 seconds  
 
 ## Boss AI
 The boss improves over time using **Monte Carlo Tree Search (MCTS)**. It starts with random moves, then repeats successful attack patterns, making it progressively more difficult.
