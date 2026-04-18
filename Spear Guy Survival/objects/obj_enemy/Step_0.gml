@@ -1,6 +1,7 @@
-if (enemHealth < 0) {
+
+if (enemHealth <= 0) {
 	sprite_index = spr_enemy_death;
-}
+} else {
 
 /// @description Movement
 
@@ -13,7 +14,8 @@ if (attackDelayTimer > 0) {
 }
 
 if (!actionChosen) {
-	action = choose(enemyActions.slash, enemyActions.thrust, enemyActions.thrustUp);
+	//action = choose(enemyActions.slash, enemyActions.thrust, enemyActions.thrustUp, enemyActions.counter);
+	action = choose_weighted(enemyActions.slash, slashWeight, enemyActions.thrust, thrustWeight, enemyActions.thrustUp, thrustUpWeight, enemyActions.counter, counterWeight);
 	actionChosen = true;
 }
 switch (action) {
@@ -48,10 +50,10 @@ switch (action) {
 if (global.playerHP > 0) {
 	if (moveState == moveStates.walk){
 		if ((x > global.cameraX) and (x < global.cameraX + global.cameraWidth)){
-			if (obj_player.x < x - 50) {
+			if (obj_player.x < x - 10) {
 				moveSpd = moveLeft;
 		
-			} else { moveSpd = moveRight; }
+			} else if (obj_player.x > x) { moveSpd = moveRight; }
 		}
 		if ((obj_player.x > x - range) and (obj_player.x < x + range) and attackDelayTimer <= 0) {
 			moveSpd = moveIdle;
@@ -66,14 +68,6 @@ if (moveState == moveStates.attack) {
 	if (startAttack) { image_index = 0; startAttack = false; }
 	moveSpd = moveIdle;
 	sprite_index = attackSprite;
-}
-
-
-
-
-
-if (moveState == moveStates.hurt) {
-	moveSpd = sign(image_xscale) * 1.5;
 }
 
 hSpeed = moveSpd * walkSpeed;
@@ -113,4 +107,5 @@ if ((moveState == moveStates.attack) or (moveState == moveStates.walk)) {
 	if (enemHealth > 0) {
 	x -= hSpeed;
 	}
+}
 }

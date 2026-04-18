@@ -53,6 +53,9 @@ function damage_player(_val, _dir, _attackType) {
 		hurtTimer = 0;
 		invincible = true;
 		attackerDirection = _dir;
+		return true;
 	}
+	
+	return false;
 	
 }
