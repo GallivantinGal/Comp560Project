@@ -10,7 +10,7 @@ if (global.playerHP <= 0) {
 	sprite_index = deathSprite;
 	hSpeed = 0;
 	vSpeed = 0;
-}
+} else {
 
 var moveSpd = global.key_right - global.key_left;
 hSpeed = moveSpd * walkSpeed;
@@ -60,7 +60,7 @@ if (moveState == moveStates.hurt) {
 	hurtTimer++;
 	//image_speed = 1;
 	sprite_index = hurtSprite;
-	if (attackerDirection == 1) { hSpeed = -2; } else { hSpeed = 2; }
+	if (attackerDirection == 1) { hSpeed = 2; } else { hSpeed = -2; }
 	if (hurtTimer > 20) {
 		event_perform(ev_other, ev_animation_end);
 		hSpeed = 0;
@@ -176,3 +176,4 @@ if ((moveState == moveStates.walk) or (moveState == moveStates.jump) or (moveSta
 //}
 y += vSpeed;
 
+}

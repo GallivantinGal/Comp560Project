@@ -14,22 +14,39 @@ moveRight = 1;
 moveLeft = -1;
 moveIdle = 0;
 moveState = moveStates.walk;
+attackDelayTimer = 0;
+attackDelay = 120;
 
 enemMaxHealth = 20;
 enemHealth = enemMaxHealth;
 
-range = 30;
+range = 200;
 attackSpeed = 30;
+walkSpeed = 0.5;
 damage = 5;
-
-walkSpeed = 1.2;
 
 enum enemyActions {
 	slash,
 	thrust,
-	counter,
-	slashUp
+	thrustUp,
+	counter
 }
+
+slashRange = 100;
+slashDamage = 5;
+
+thrustRange = 200;
+thrustDamage = 5;
+
+thrustUpRange = 50;
+thrustUpDamage = 5;
+
+counterRange = 100;
+counterDamage = 0;
+
+action = noone;
+attackSprite = spr_slash_up;
+actionChosen = false;
 
 
 

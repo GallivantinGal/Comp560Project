@@ -3,7 +3,7 @@
 hSpeed = 0;
 vSpeed = 0;
 gravitySpeed = 0.3;
-walkSpeed = 2.4;
+walkSpeed = 3;
 fallSpeed = 6.5;
 hurtTimer = 0;
 
@@ -29,7 +29,10 @@ weaponDmg = 1;
 hitByAttack = ds_list_create();
 
 attackerDirection = 0;
-//1 = right, -1 = left
+//-1 = right, 1 = left
+
+global.playerHPMax = 60;
+global.playerHP = global.playerHPMax;
 
 
 slashAgain = false;

@@ -19,10 +19,7 @@ global.playerLevel = 1;
 nextLevel = 0;
 
 ///Stats
-global.playerHPMax = 14;
-global.playerHP = global.playerHPMax;
-global.playerManaMax = 6;
-global.playerMana = global.playerManaMax;
+
 
 healthbar_width = 128;
 healthbar_height = 6;
