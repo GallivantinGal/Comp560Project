@@ -14,7 +14,8 @@ You control a knight fighting a large spear boss. Combat is timing-based, so avo
 - **E while moving** → Running Slash    
 - **Spam E** → Cycles through basic slash combo  
 - **Q** → Thrust  
-- **Shift** → Block  
+- **Shift** → Block
+- **R** → Restart the game 
 
 ## Boss Attacks
 - **Attack 1:** 360° swipe that hits all around the boss  
@@ -30,3 +31,6 @@ Defeat the boss while managing your attacks and defense. Learn patterns, react c
 
 ## Project Context
 This game was developed as a final project for COMP 560, focusing on combat mechanics, input handling, and an adaptive AI-driven boss encounter.
+
+## Installation
+Use **Spear Guy Survival** application for use on Windows.
