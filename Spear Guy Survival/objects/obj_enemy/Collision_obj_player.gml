@@ -2,7 +2,7 @@ if (enemHealth > 0) {
 with (other) {
 	obj_enemy.success = damage_player(other.damage, other.image_xscale, other.action);
 }
-
+if (adjustWeights) {
 switch (action) {
 	
 	case enemyActions.slash:
@@ -38,4 +38,6 @@ switch (action) {
 	break;
 	
 }
+}
+adjustWeights = false;
 }

@@ -17,6 +17,8 @@ moveState = moveStates.walk;
 attackDelayTimer = 0;
 attackDelay = 120;
 
+adjustWeights = false; //marker to make sure we only adjust weight once per attack
+
 enemMaxHealth = 20;
 enemHealth = enemMaxHealth;
 
@@ -34,19 +36,19 @@ enum enemyActions {
 
 slashRange = 100;
 slashDamage = 5;
-slashWeight = 1;
+slashWeight = 2;
 
 thrustRange = 200;
 thrustDamage = 5;
-thrustWeight = 1;
+thrustWeight = 2;
 
 thrustUpRange = 50;
 thrustUpDamage = 5;
-thrustUpWeight = 1;
+thrustUpWeight = 2;
 
 counterRange = 100;
 counterDamage = 0;
-counterWeight = 1;
+counterWeight = 2;
 
 action = noone;
 attackSprite = spr_slash_up;

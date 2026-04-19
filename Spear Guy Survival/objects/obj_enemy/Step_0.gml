@@ -65,22 +65,12 @@ if (global.playerHP > 0) {
 
 //attack logic
 if (moveState == moveStates.attack) {
-	if (startAttack) { image_index = 0; startAttack = false; }
+	if (startAttack) { image_index = 0; startAttack = false; adjustWeights = true; }
 	moveSpd = moveIdle;
 	sprite_index = attackSprite;
 }
 
 hSpeed = moveSpd * walkSpeed;
-
-if (moveState == moveStates.hurt) {
-	hurtTimer++;
-
-	if (enemHealth > 0) {
-	if (hurtTimer > 20) { 
-	moveState = moveStates.walk;	
-	}
-	}
-}
 
 //Sprite direction
 if (moveState == moveStates.walk) {
@@ -102,10 +92,6 @@ if (hSpeed != 0) {
 if ((moveState == moveStates.attack) or (moveState == moveStates.walk)) {
 	if (obj_player.moveState != moveStates.hurt) {
 	x += hSpeed;
-	}
-} else if (moveState == moveStates.hurt) {
-	if (enemHealth > 0) {
-	x -= hSpeed;
 	}
 }
 }
