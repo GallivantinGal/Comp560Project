@@ -19,7 +19,7 @@ attackDelay = 120;
 
 adjustWeights = false; //marker to make sure we only adjust weight once per attack
 
-enemMaxHealth = 20;
+enemMaxHealth = 100;
 enemHealth = enemMaxHealth;
 
 range = 200;
