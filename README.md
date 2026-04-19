@@ -1,3 +1,6 @@
+# Group Members:
+Samantha Espinosa, Hannah Cameron, Rian Gonzalez Gomez, Anthony Aguiar
+
 # Spear Guy Survival
 
 **Spear Guy Survival** is a 2D single-boss, souls-like game where you face a powerful spear-wielding enemy in a fast-paced combat encounter. Your goal is to survive and defeat the boss using timing, positioning, and smart attack choices.
