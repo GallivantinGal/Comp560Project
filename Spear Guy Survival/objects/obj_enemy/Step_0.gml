@@ -68,6 +68,7 @@ if (moveState == moveStates.attack) {
 	if (startAttack) { image_index = 0; startAttack = false; adjustWeights = true; }
 	moveSpd = moveIdle;
 	sprite_index = attackSprite;
+	image_speed = 1;
 }
 
 hSpeed = moveSpd * walkSpeed;
