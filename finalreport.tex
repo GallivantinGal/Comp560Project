@@ -70,18 +70,14 @@
 
 \begin{abstract}
 We present Spear Guy Survival, a 2D single-boss souls-like game developed in GameMaker Studio. The project focuses on fast-paced melee combat, player timing, and an adaptive boss encounter. The player uses multiple attacks, movement options, and blocking mechanics to survive against a spear-wielding enemy. To increase challenge over time, the boss uses Monte Carlo Tree Search (MCTS) to explore attack choices and reinforce successful action patterns. Our project demonstrates how lightweight AI methods can improve enemy behavior in a small-scale action game.
-\end{abstract}
-
-\section{Introduction}
+\end{abstract}\section{Introduction}
 
 Designing a good game enemy is an important problem in artificial intelligence. In action games, especially boss fights, the enemy should feel challenging and interesting, but not unfair or too easy to predict. If a boss only follows a fixed pattern, players can quickly learn the same response every time, which makes the fight less exciting. Because of this, game AI is useful for creating enemies that can react to the player and make each encounter feel more dynamic.
 
 In this project, we present \textit{Spear Guy Survival}, a 2D single-boss souls-like game developed in GameMaker Studio. The game focuses on fast combat, where the player must survive against a spear-wielding boss by using movement, attacks, and blocking at the right time. To make the encounter more engaging, we designed the boss to use Monte Carlo Tree Search-inspired decision making, so it can explore different attack choices and adapt its behavior based on what works during the fight. This project shows how AI methods can improve enemy behavior even in a small student game project.
 
 \section{Game Design and Mechanics}
-% Rian writes here
-
-\section{Boss AI with Monte Carlo Tree Search}
+% Rian writes here\section{Boss AI with Monte Carlo Tree Search}
 
 The boss AI in \textit{Spear Guy Survival} uses a simplified decision system inspired by Monte Carlo Tree Search. Instead of following a fixed attack loop, the boss chooses among four possible actions during combat. At the beginning, each action has the same initial weight, so the boss has no strong preference for one move over another. During gameplay, one action is selected at a time using a weighted random choice, which introduces variation while still allowing the system to favor actions that perform well.
 
